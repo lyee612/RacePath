@@ -11,29 +11,30 @@ package ADT;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class RacePath<T> implements RacePathInterface<T> {
+public class RacePath <T> implements RacePathInterface<T> {
     
-    private T[] station;
-    private int numberOfStations;
-    private static final int DEFAULT_INITIAL_PATHSIZE = 10;
-    private Node firstNode;
-    
-    public RacePath(){
+    //private T[] station;
+    private int numberOfStations = 0;
+    private Node firstNode= null;
+    private Node lastNode = null;
+    private Node currentNode = null;
+
+    /*public RacePath(){
         this(DEFAULT_INITIAL_PATHSIZE);
     }
     
-    public RacePath(int initialPathSize){
+   public RacePath(int initialPathSize){
         numberOfStations = 0;
         station = (T[]) new Object[initialPathSize];
     }
-    
+   
    @Override
     public T[] createRacePath(int pathSize) {
          station = (T[]) new Object [pathSize];
          return station;
-    }
+    }*/
     
-    @Override
+   /* @Override
     public boolean addStation(T newStation){
         if(isPathFull()){
             return false;
@@ -42,11 +43,30 @@ public class RacePath<T> implements RacePathInterface<T> {
             station[numberOfStations] = newStation;
             numberOfStations++;
             return true;
-    }
+    }*/
 
     @Override
-    public boolean addStation(int newPosition, T newStation) {
-       boolean isSuccessful = true;
+    public boolean addStation(T newStation) {
+      Node newNode = new Node(newStation);
+        
+        if(numberOfStations==0){
+            firstNode = newNode;
+            lastNode = newNode;
+        }
+        else{
+            lastNode.next = newNode;
+            newNode.prev = lastNode;
+            lastNode = newNode;
+        }
+        numberOfStations++;
+        return true;   
+        }
+    
+    public int getNumOfStations(){
+            return numberOfStations;
+    }
+    
+        /*boolean isSuccessful = true;
         if((newPosition >= 1) && (newPosition <= numberOfStations +1) ){
             if(isPathFull()){
                isSuccessful = false;
@@ -58,24 +78,27 @@ public class RacePath<T> implements RacePathInterface<T> {
         else
             isSuccessful = false;
         
-        return isSuccessful;
-    }
+        return isSuccessful;*/
+    
     
     @Override
-    public T removeStation(int givenPosition){
-        T result = null;
-        if((givenPosition >= 0) && (givenPosition <= numberOfStations+1)){
-            result = station[givenPosition-1];
-            
-            if(givenPosition < numberOfStations){
-                removeGap(givenPosition);
-            }
+    public boolean removeStation(T station){
+        boolean remove = false;
+        Node temp = firstNode;
+        while(!remove && temp.next!=null){
+        if(temp.data==station){
+            temp.prev.next= temp.next;
+            temp.next = null; 
             numberOfStations--;
+            remove = true;
         }
-        return result;
+        else
+            temp= temp.next;
+        }
+        return remove;
     }
     
-    private boolean isPathFull(){
+   /* private boolean isPathFull(){
         return numberOfStations == station.length;
     }
     
@@ -106,22 +129,33 @@ public class RacePath<T> implements RacePathInterface<T> {
             station[randomIndex] = station[i];
             station[i] = a;
         }
+    }*/
+    public String toString(){
+     Node temp = firstNode;
+     String str = "";
+        while(temp != null){
+            Station station = (Station)temp.data;
+            str = str + station.getStationName()+ "\n";
+            /*if(getPosition() == temp){
+                output += "  *** Current Position ***";
+            }*/
+            temp = temp.next;
+        }
+        return str;
     }
 
     private class Node{
         private T data;
         private Node next;
+        private Node prev;
         
-        private Node(T data) {
-        this.data = data;
-        this.next = null;
+        public Node(T data){
+            this.data = data;
         }
-
-        private Node(T data,Node next) {
-        this.data = data;
-        this.next = next;
+                
+        public String toString(){
+            return data.toString();
         }
-        
     }
 
 }

@@ -8,47 +8,30 @@ package Java;
  *
  * @author Zhen Yee
  */
-import java.util.Calendar;
+import java.util.*;
 public class Player {
     private String name;
-    private String id;
-    private Calendar startTime;
-    private Calendar endTime;
+    private long startTime;
+    private long endTime;
     private long result;
     
-    public Player(){
+    public Player(String name){
         this.name = name;
-        this.id = id;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.result = result;
+        this.startTime = System.currentTimeMillis();    
     }
     
     public String getName(){
         return name;
     }
-    public void setName(String name){
-        this.name = name;
-    }
     
-     public String getId(){
-        return id;
-    }
-    public void setId(String id){
-        this.id = id;
-    }
-    
-    public Calendar getStartTime(){
+    public long getStartTime(){
         return startTime;
     }
-    public void setStartTime(Calendar startTime){
-        this.startTime = startTime;
-    }
     
-    public Calendar getEndTime(){
+    public long getEndTime(){
         return endTime;
     }
-    public void setEndTime(Calendar endTime){
+    public void setEndTime(long endTime){
         this.endTime = endTime;
     }
     
@@ -56,12 +39,8 @@ public class Player {
         return result;
     }
     
-    public void setResult(long result){
-        this.result = result;
-    }
-    
-    public long calculateResult(Calendar startTime, Calendar endTime){
-        result = endTime.getTimeInMillis() - startTime.getTimeInMillis();
+    public long calculateResult(long startTime, long endTime){
+        result = endTime - startTime;
         return result;
     }
 }

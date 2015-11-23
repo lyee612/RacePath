@@ -9,10 +9,10 @@ package ADT;
  * @author Zhen Yee
  */
 public interface RacePathInterface<T> {
-    public T[] createRacePath(int pathSize);
+    //public T[] createRacePath(int pathSize);
+    //public boolean addStation(T newStation);
     public boolean addStation(T newStation);
-    public boolean addStation(int newPosition, T newStation);
-    public T removeStation(int givenPosition);
-    public void changeStationSquence();
+    public boolean removeStation(T station);
+    //public void changeStationSquence();
 
 }
