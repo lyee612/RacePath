@@ -85,18 +85,29 @@ public class RacePath <T> implements RacePathInterface<T> {
     public boolean removeStation(T station){
         boolean remove = false;
         Node temp = firstNode;
-        while(!remove && temp.next!=null){
+        while(!remove){
         if(temp.data==station){
+             if(temp==firstNode){
+                 firstNode= temp.next;
+                 lastNode=temp.next;
+                 temp.next=null;
+                 temp.prev=null;
+                 remove = true;
+                 numberOfStations--;
+             }
+             else{
             temp.prev.next= temp.next;
-            temp.next = null; 
+            temp.next = null;   
             numberOfStations--;
             remove = true;
-        }
+             }
+        }     
         else
             temp= temp.next;
         }
-        return remove;
+        return remove; 
     }
+  
     
    /* private boolean isPathFull(){
         return numberOfStations == station.length;
