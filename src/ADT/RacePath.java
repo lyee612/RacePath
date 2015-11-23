@@ -18,6 +18,7 @@ public class RacePath <T> implements RacePathInterface<T> {
     private Node firstNode= null;
     private Node lastNode = null;
     private Node currentNode = null;
+    private int currentStation;
 
     /*public RacePath(){
         this(DEFAULT_INITIAL_PATHSIZE);
@@ -65,6 +66,8 @@ public class RacePath <T> implements RacePathInterface<T> {
     public int getNumOfStations(){
             return numberOfStations;
     }
+    
+    
     
         /*boolean isSuccessful = true;
         if((newPosition >= 1) && (newPosition <= numberOfStations +1) ){
