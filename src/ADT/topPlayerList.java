@@ -45,31 +45,30 @@ public class topPlayerList<T extends Comparable<T>> implements topPlayerListInte
              moveBackward(step);
     }
     
-    public int moveForward (int step){
+   /* public int moveForward (int step){
         return position + step;
     }
     
     public int moveBackward (int step){
         return position - step;
-    }
+    }*/
     
-    public boolean addPlayerToList( T newDuration,T newPlayer){
+    public boolean addPlayerToList( T newPlayer){
+        Player tempPlayer = (Player) newPlayer;
         Node newNode = new Node(newPlayer,null);
-        if(position == station.length -1){
             if(isEmpty()){
                 firstNode = newNode;
-                currentDuration = newDuration;
             }
             else{
                 Node currentNode = firstNode;
                 if(numberOfPlayers <= DEFAULT_TOPLIST) {
-                if(currentDuration.compareTo(newDuration) < 0 )
+                if(.compareTo(tempPlayer.getResult()) < 0 )
                     newNode.next = currentNode;
                 else
                     currentNode.next = newNode;
                 }
-            } 
-        }
+            }
+        
           return true;
     }
     
