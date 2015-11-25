@@ -14,7 +14,7 @@ import ADT.RacePath;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class topPlayerList<T extends Comparable<T>> implements topPlayerListInterface<T> {
+public class topPlayerList <T extends Comparable<T>> implements topPlayerListInterface<T> {
    // private RacePath[] station;
     private int position; // singlePlayer position index
     private int numberOfPlayers;

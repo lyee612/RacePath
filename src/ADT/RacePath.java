@@ -18,7 +18,11 @@ public class RacePath <T> implements RacePathInterface<T> {
     private Node firstNode= null;
     private Node lastNode = null;
     private Node currentNode = null;
-    private int currentStation;
+    
+    
+    public RacePath(){
+        
+    }
 
     /*public RacePath(){
         this(DEFAULT_INITIAL_PATHSIZE);
@@ -53,6 +57,7 @@ public class RacePath <T> implements RacePathInterface<T> {
         if(numberOfStations==0){
             firstNode = newNode;
             lastNode = newNode;
+            currentNode=newNode;
         }
         else{
             lastNode.next = newNode;
@@ -67,6 +72,10 @@ public class RacePath <T> implements RacePathInterface<T> {
             return numberOfStations;
     }
     
+    public String getCurrentStationName(){
+        Station currentStation = (Station) currentNode.data;
+        return currentStation.getStationName();
+    }
     
     
         /*boolean isSuccessful = true;
@@ -110,6 +119,35 @@ public class RacePath <T> implements RacePathInterface<T> {
         }
         return remove; 
     }
+    
+    public void movePosition(int diceValue){
+        
+        if (diceValue >0){
+        for (int i = 0; i < diceValue; i++){
+            if(!checkWin())
+                    currentNode = currentNode.next;
+            else{
+                break;
+            }
+        }}
+        else{
+            for (int i = 0; i > diceValue; i--){
+                if(!(currentNode == firstNode)){
+                    currentNode = currentNode.prev;
+                }
+             }
+        } 
+        Station currentStation = (Station) currentNode.data;
+        System.out.println("Current Station is: " + currentStation.getStationName());
+    }
+    
+    public boolean checkWin(){
+        if (currentNode==lastNode)
+            return true;
+        else return false;
+    }
+    
+
   
     
    /* private boolean isPathFull(){

@@ -23,13 +23,16 @@ public class Station {
     public String getStationName(){
         return stationName;
     }
-    public String getQues(int i){
-        return questions[i-1];
+    public void printQues( int i){
+        System.out.println(questions[i]);
+        System.out.println("Enter your answer >>> ");
     }
     
     public boolean checkAns(int i, String ans){
-        if(answers[i-1]==ans)
+        if(answers[i].compareToIgnoreCase(ans)==0)
             return true;
         else return false;
     }
+    
+  
 }
