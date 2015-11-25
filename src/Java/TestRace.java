@@ -1,12 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Java;
 import java.util.*;
 import ADT.*;
-
-
 
 public class TestRace {
 
@@ -15,8 +9,9 @@ public class TestRace {
     static int numOfPlayer = 0;
     
     static final String[] quesA = {"20 - 1 =", "7 * 7 =","890 * 23 =","Time is Valuable.[True(1)/False(0)]","22 % 2 ="};
-    static final String[] quesB={"Human is homo-sapien.( 1=true; 0=false)", "Cooper is cute( 1=true; 0=false)","1242 - 901 =","7232 - 22=","672 * 90 ="};
-    static final String[] quesC = {"1. Which country currently emits the most greenhouse gases? A. United States B. China C. India D. England","2 ^ 3= ", "3 * 7 = ","Any number can divide by 0? [Can(1)/Cannot(0)]","3 ^ 3 = "};
+    static final String[] quesB={"Human is homo-sapien.( 1=true; 0=false)", "Cooper is cute( 1=true; 0=false)",
+                                 "1242 - 901 =","7232 - 22=","672 * 90 ="};
+    static final String[] quesC = {"log10 / log2 = (round to 2 dp)", "2 ^ 3= ", "3 * 7 = ","Any number can divide by 0? [Can(1)/Cannot(0)]","3 ^ 3 = "};
     static final String[] quesD = {"5+|-11|+11 = ", "-8+5(2-4) = ", "48/(-4)^2 + (-9) = ", "-15-(-7) = ","7+(-17)+4 = "};
     static final String[] quesE = {"2w+w = ", "3w + 4(2+w) = ", "5(w+1) +2 = ", "6w+18w = ", "2w+3(5w+2) = "};
     static final String[] quesF = {"3(v+w) = ", "2(2v-3w) = ", "(8v+8w)/(2v+2w) = ","2(5v+3w) = ","2(6v)+w = "};
@@ -24,7 +19,7 @@ public class TestRace {
     
     static final String[] ansA = {"19", "49","20470","0","0"};
     static final String[] ansB = {"1", "1", "341", "7210","60480"};
-    static final String[] ansC = {"B","8","21","0","27"};
+    static final String[] ansC = {"3.32","8","21","0","27"};
     static final String[] ansD = {"27","-18","-6","-8","-6"};
     static final String[] ansE = {"3w","7w+8","5w+7","24w","17w+6"};
     static final String[] ansF = {"3v+3w","4v-6w","4","10v+6w","12v+w"};
@@ -38,7 +33,7 @@ public class TestRace {
                                       new Station("Station F",quesF, ansF),
                                       new Station("Station G", quesG, ansG)} ;
    
-  static RacePath<Station> path;
+    static RacePath<Station> path;
     
     public static void main(String[] args) {
          path = new RacePath<Station>();
@@ -57,7 +52,7 @@ public class TestRace {
             
             if (choice==1){
                 startGame();  
-                choice = menu();
+                menu();
                }
             else if(choice==2){
                 managePath();
@@ -83,12 +78,12 @@ public class TestRace {
     }
     
     public static int menu(){
-         System.out.println("===================================");
+        System.out.println("===================================");
         System.out.println("1. Start Game (1)");
         System.out.println("2. Race Path Manage (2)");
         System.out.println("3. Top 10 Player (3)");
         System.out.println("4. Exit (-1)");
-        System.out.println("Please select your choice:");
+        System.out.print("Please select your choice:");
         int choice = sc.nextInt();
         sc.nextLine();
                 
@@ -103,7 +98,7 @@ public class TestRace {
        // topPlayerList<Player> player = new topPlayerList<Player>();
         
         Player player1 = new Player(playerName);
-        System.out.println("You now have "+ life + "life");
+        System.out.println("===================================");
           
         boolean proceed = true;
         boolean matched = true;
@@ -114,8 +109,6 @@ public class TestRace {
             }
              else{
                 String reply; 
-               
-                
                 String currentStation = path.getCurrentStationName();
               
                 for(int i = 0; i< 7; i++){
@@ -129,7 +122,7 @@ public class TestRace {
                                 break;
                             }
                             int randomNum = randomQues();
-                            System.out.println(life);
+                            System.out.println("You now have "+ life + " life");
                             station[i].printQues(randomNum);
                             reply = sc.nextLine();
                             matched = station[i].checkAns(randomNum, reply);
@@ -138,8 +131,9 @@ public class TestRace {
                     }
                 }
              System.out.println("You now have "+ life +" life.");  
-             proceed = getPermission();
-             if(proceed!=false){
+             
+             if(proceed!=false&& life>0&& !path.checkWin()){
+                 proceed = getPermission();
                 int diceValue = rollDice();
                 path.movePosition(diceValue);
              }}};
@@ -149,19 +143,15 @@ public class TestRace {
              path = new RacePath<Station>();
              mainMenu();
          }
-         if(path.checkWin()){
+         if(path.checkWin()&&life>1){
              System.out.println("Congratulations!! You Won!!! ");
              mainMenu();
              
-         }}
-         
-         
-         
-      
+         }}    
     
     public static boolean getPermission(){
-        System.out.println("Type any positive number to roll a dice (-1 to exit game):");
-        int val = sc.nextInt();
+        System.out.println("Enter positive number to roll a dice (-1 to exit game):");
+        int val =  sc.nextInt();
         sc.nextLine();
         if (val>0)
             return true;
@@ -195,38 +185,37 @@ public class TestRace {
         int choice = sc.nextInt();
         sc.nextLine();
         if (choice ==1 ){
-            System.out.println("Enter Station (A-G : enter one) :");
-            String stationName = "Station "+ sc.next().toUpperCase();
+            System.out.print("Enter Station (A-G : enter one) :");
+            String stationName = "Station "+ sc.nextLine().toUpperCase();
             switch(stationName){
-                case "A":
+                case "Station A":
                    path.addStation(station[0]);
                     break;
-                case "B":
-                   path.addStation(station[0]);
+                case "Station B":
+                   path.addStation(station[1]);
                     break;
-                case "C":
-                   path.addStation(station[0]);
+                case "Station C":
+                   path.addStation(station[2]);
                     break;
-                case "D":
-                   path.addStation(station[0]);
+                case "Station D":
+                   path.addStation(station[3]);
                     break;
-                case "E":
-                   path.addStation(station[0]);
+                case "Station E":
+                   path.addStation(station[4]);
                     break;
-                case "F":
-                   path.addStation(station[0]);
+                case "Station F":
+                   path.addStation(station[5]);
                     break;
-                case "G":
-                   path.addStation(station[0]);
+                case "Station G":
+                   path.addStation(station[6]);
                     break;
                 default:
                     System.out.println("Station adding failed..\n");
             }
-            currentStation(path);
             managePath();        
         }
         else if(choice ==2 ){
-            System.out.println("Enter Station to delete(A-G: enter one) : ");
+            System.out.print("Enter Station to delete(A-G: enter one) : ");
             String stationDelete = "Station "+sc.next().toUpperCase();
             boolean found= false;
             for(int i=0;i<path.getNumOfStations();i++){
@@ -239,14 +228,16 @@ public class TestRace {
                 System.out.println("Station not exits..");
                 System.out.println("Station deleting failed..\n");
             }
-            currentStation(path);
             managePath();
         }
         else if(choice==3)
-            menu();
-        else
+            mainMenu();
+        else{
+            System.out.println("Invalid Input..");
+            managePath();
             
-    }
+    }   //end if-else statement
+    }//end managePath()
     
      public static void currentStation(RacePath path){
            System.out.println("Current Stations in Race Path :");
