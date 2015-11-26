@@ -31,7 +31,7 @@ public class TestRace {
                                       new Station("Station D",quesD, ansD),
                                       new Station("Station E", quesE, ansE),
                                       new Station("Station F",quesF, ansF),
-                                      new Station("Station G", quesG, ansG)} ;
+                                      new Station("Station G", quesG, ansG),};
    
     static RacePath<Station> path;
     
@@ -48,7 +48,7 @@ public class TestRace {
         
         welcomeBanner();
         int choice = menu();
-        while(choice!=-1)
+        while(choice!=-1){
             
             if (choice==1){
                 startGame();  
@@ -68,7 +68,7 @@ public class TestRace {
                 choice = menu();
             }
         
-         endGame();
+        }endGame();
     }
 
     
@@ -97,7 +97,10 @@ public class TestRace {
         
        // topPlayerList<Player> player = new topPlayerList<Player>();
         
-        Player player1 = new Player(playerName);
+        Player[] player;
+        player[numOfPlayer] = new Player(playerName);
+        
+        
         System.out.println("===================================");
           
         boolean proceed = true;
@@ -145,6 +148,7 @@ public class TestRace {
          }
          if(path.checkWin()&&life>1){
              System.out.println("Congratulations!! You Won!!! ");
+             numOfPlayer++;
              mainMenu();
              
          }}    
