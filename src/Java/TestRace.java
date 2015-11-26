@@ -34,6 +34,7 @@ public class TestRace {
                                       new Station("Station G", quesG, ansG),};
    
     static RacePath<Station> path;
+    static topPlayerListInterface<Player> topList = new topPlayerList<Player>();
     
     public static void main(String[] args) {
          path = new RacePath<Station>();
@@ -97,15 +98,14 @@ public class TestRace {
         
        // topPlayerList<Player> player = new topPlayerList<Player>();
         
-        Player[] player;
-        player[numOfPlayer] = new Player(playerName);
-        
+        Player player = new Player(playerName);
         
         System.out.println("===================================");
           
         boolean proceed = true;
         boolean matched = true;
-         while(proceed && !path.checkWin()){
+     
+        while(proceed){
              if(life<1){
              gameOver();
              break;
@@ -139,16 +139,30 @@ public class TestRace {
                  proceed = getPermission();
                 int diceValue = rollDice();
                 path.movePosition(diceValue);
-             }}};
+             }
+             else
+                 proceed = false;
+             }};
             
-         if(!proceed){
+         if(!proceed && !path.checkWin()){
              System.out.println("Exiting game..");
              path = new RacePath<Station>();
              mainMenu();
          }
-         if(path.checkWin()&&life>1){
+         if(path.checkWin()&&life>=1){
              System.out.println("Congratulations!! You Won!!! ");
-             numOfPlayer++;
+             long result = player.calculateResult();
+             System.out.println("You used "+ result + " seconds to finish the game!!.");
+             System.out.println(topList.addPlayerToList(player));
+             System.out.println("\n===================");
+            System.out.println("Top 10 Player");
+            System.out.println("===================");
+            System.out.println("No. \tPlayer Name\tTime Used(s)");
+            System.out.println("--------------------------------------");
+            System.out.println(topList.displayRanking());
+            System.out.println();
+             path = new RacePath<Station>();
+             //numOfPlayer++;
              mainMenu();
              
          }}    
@@ -250,7 +264,13 @@ public class TestRace {
         }
     
     public static void topPlayer(){
-    
+            System.out.println("\n===================");
+            System.out.println("Top 10 Player");
+            System.out.println("===================");
+            System.out.println("No. \tPlayer Name\tTime Used(s)");
+            System.out.println("--------------------------------------");
+            System.out.println(topList.displayRanking());
+            System.out.println();
     }
     
     public static void endGame(){

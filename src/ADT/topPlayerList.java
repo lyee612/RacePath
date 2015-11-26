@@ -1,81 +1,89 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ADT;
 
-/**
- *
- * @author Zhen Yee
- */
-
-import Java.Player;
-import ADT.RacePath;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.*;
-
-public class topPlayerList <T extends Comparable<T>> implements topPlayerListInterface<T> {
+/**
+ *
+ * @author lyee
+ */
+public class topPlayerList<T> implements topPlayerListInterface<T> {
    // private RacePath[] station;
-    private int position; // singlePlayer position index
-    private int numberOfPlayers;
-    private T currentDuration;
     private Node firstNode;
-    private static final int DEFAULT_TOPLIST = 10;
+    private Node beforeNode;
+    private Node currentNode;
     
     public topPlayerList(){
-        this(DEFAULT_TOPLIST);
-    }
-    
-    public topPlayerList(int DEFAULT_TOPLIST){
         firstNode = null;
-        numberOfPlayers = 0;
-        position = 0;
-        currentDuration = null;
     }
     
-    public void rollDice(){
-         Random random = new Random();
-         int step = random.nextInt(-2) + 3 ; //the number will be generated between -2 and 3
-         
-         if(step == 0) //only allow -2,-1,1,2,3, so rollDice again
-             rollDice();
-         if(step>0)
-             moveForward(step);
-         if(step<0)
-             moveBackward(step);
-    }
-    
-   /* public int moveForward (int step){
-        return position + step;
-    }
-    
-    public int moveBackward (int step){
-        return position - step;
-    }*/
-    
-    public boolean addPlayerToList( T newPlayer){
-        Player tempPlayer = (Player) newPlayer;
-        Node newNode = new Node(newPlayer,null);
+    @Override
+    public boolean addPlayerToList(T newEntry){
+        Node newNode = new Node(newEntry);
+        Player newPlayer = (Player) newNode.data;
+        boolean success=false;
+       
             if(isEmpty()){
                 firstNode = newNode;
+                success = true;
             }
-            else{
-                Node currentNode = firstNode;
-                if(numberOfPlayers <= DEFAULT_TOPLIST) {
-                if(.compareTo(tempPlayer.getResult()) < 0 )
-                    newNode.next = currentNode;
-                else
-                    currentNode.next = newNode;
-                }
-            }
-        
-          return true;
+            else{ 
+                currentNode = firstNode;
+                for(int i = 0;i<10;i++){
+                        Player existPlayer = (Player) currentNode.data;
+                        System.out.println(newPlayer.getResult()+",,"+existPlayer.getResult());
+                        //compare old player time and new player time
+                        if( newPlayer.getResult()<existPlayer.getResult()){
+                            //if top node result greater than new node result
+                            if(i==0){
+                                newNode.next = currentNode;
+                                firstNode = newNode; // new entry will be the head 
+                                success= true;
+                                existPlayer = (Player) currentNode.data;
+                                break;
+                            }
+                            else{
+                                newNode.next = currentNode;
+                                beforeNode.next = newNode; //new entry will be inserted into middle of node
+                                success = true;
+                                break;
+                            }
+                        }
+                        else{ // move to compare new node with next existing node
+                            beforeNode = currentNode;
+                            currentNode = currentNode.next;
+                            if(currentNode==null){
+                                beforeNode.next=newNode;
+                                newNode=currentNode;
+                                newNode.next=null;
+                                success = true;
+                                break;
+                            } //end if current node == null
+                        } 
+            }//close for loop
+        }// end else for !isEmpty()
+        return success; // return false if adding to list failed..
+    } // end of addPlayerToList()
+       
+    @Override
+    public String displayRanking(){
+        String outputStr = "";
+        Node tempNode = firstNode;
+        int i = 1;
+        while (tempNode != null) {
+            Player temp = (Player) tempNode.data;
+            outputStr += i + "\t"+ temp.getPlayerName() + "\t\t" + temp.getResult() + " second.\n";
+            tempNode = tempNode.next;
+            i++;
+        }
+        return outputStr;
     }
-    
-    public boolean isEmpty(){
-        return firstNode == null ;
+
+    @Override
+    public boolean isEmpty() {
+        return firstNode == null;
     }
+  
     
     private class Node{
         private T data;
@@ -85,22 +93,7 @@ public class topPlayerList <T extends Comparable<T>> implements topPlayerListInt
         this.data = data;
         this.next = null;
         }
-
-        private Node(T data, Node next) {
-        this.data = data;
-        this.next = next;
-        }
+    }
         
-    }
-    
-    public String displayPlayerRanking(){
-        String outputStr = "";
-        Node currentNode = firstNode;
-        while (currentNode != null) {
-            outputStr += currentNode.data + "\n";
-            currentNode = currentNode.next;
-    }
-       return outputStr;
-    }
- 
+   
 }

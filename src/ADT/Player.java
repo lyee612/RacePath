@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Java;
+package ADT;
 
 /**
  *
@@ -15,16 +15,18 @@ public class Player {
     private long endTime;
     private long result;
     
+    public Player(){}
+    
     public Player(String name){
         this.name = name;
-        this.startTime = System.currentTimeMillis();    
+        this.startTime = System.currentTimeMillis()/1000;    
     }
     
-    public String getName(){
+    public String getPlayerName(){
         return name;
     }
     
-    public long getStartTime(){
+  /*  public long getStartTime(){
         return startTime;
     }
     
@@ -33,13 +35,14 @@ public class Player {
     }
     public void setEndTime(long endTime){
         this.endTime = endTime;
-    }
+    }*/
     
     public long getResult(){
         return result;
     }
     
-    public long calculateResult(long startTime, long endTime){
+    public long calculateResult(){
+        endTime = System.currentTimeMillis()/1000;
         result = endTime - startTime;
         return result;
     }
