@@ -47,7 +47,7 @@ public class TestRace {
     public static void main(String[] args) {
         printQuestionTextFile();
         printAnswerTextFile();
-        //mainMenu();
+        mainMenu();
     }
     
     public static void mainMenu(){
