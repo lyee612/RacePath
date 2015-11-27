@@ -1,13 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ADT;
 
-/**
- *
- * @author Zhen Yee
- */
 import java.util.*;
 public class Player {
     private String name;
@@ -25,18 +17,7 @@ public class Player {
     public String getPlayerName(){
         return name;
     }
-    
-  /*  public long getStartTime(){
-        return startTime;
-    }
-    
-    public long getEndTime(){
-        return endTime;
-    }
-    public void setEndTime(long endTime){
-        this.endTime = endTime;
-    }*/
-    
+
     public long getResult(){
         return result;
     }

@@ -8,7 +8,7 @@ import java.util.*;
  * @author lyee
  */
 public class topPlayerList<T> implements topPlayerListInterface<T> {
-   // private RacePath[] station;
+ 
     private Node firstNode;
     private Node beforeNode;
     private Node currentNode;
@@ -22,7 +22,6 @@ public class topPlayerList<T> implements topPlayerListInterface<T> {
         Node newNode = new Node(newEntry);
         Player newPlayer = (Player) newNode.data;
         boolean success=false;
-       
             if(isEmpty()){
                 firstNode = newNode;
                 success = true;
@@ -31,7 +30,6 @@ public class topPlayerList<T> implements topPlayerListInterface<T> {
                 currentNode = firstNode;
                 for(int i = 0;i<10;i++){
                         Player existPlayer = (Player) currentNode.data;
-                        System.out.println(newPlayer.getResult()+",,"+existPlayer.getResult());
                         //compare old player time and new player time
                         if( newPlayer.getResult()<existPlayer.getResult()){
                             //if top node result greater than new node result
@@ -55,11 +53,10 @@ public class topPlayerList<T> implements topPlayerListInterface<T> {
                             if(currentNode==null){
                                 beforeNode.next=newNode;
                                 newNode=currentNode;
-                                newNode.next=null;
                                 success = true;
                                 break;
                             } //end if current node == null
-                        } 
+                        }
             }//close for loop
         }// end else for !isEmpty()
         return success; // return false if adding to list failed..
@@ -72,7 +69,7 @@ public class topPlayerList<T> implements topPlayerListInterface<T> {
         int i = 1;
         while (tempNode != null) {
             Player temp = (Player) tempNode.data;
-            outputStr += i + "\t"+ temp.getPlayerName() + "\t\t" + temp.getResult() + " second.\n";
+            outputStr += i + "\t"+ temp.getPlayerName() + "\t\t" + temp.getResult() + " seconds.\n";
             tempNode = tempNode.next;
             i++;
         }
@@ -83,8 +80,7 @@ public class topPlayerList<T> implements topPlayerListInterface<T> {
     public boolean isEmpty() {
         return firstNode == null;
     }
-  
-    
+ 
     private class Node{
         private T data;
         private Node next;
@@ -93,7 +89,5 @@ public class topPlayerList<T> implements topPlayerListInterface<T> {
         this.data = data;
         this.next = null;
         }
-    }
-        
-   
+    } 
 }

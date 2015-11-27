@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ADT;
 
 /**
@@ -24,6 +20,9 @@ public class Station {
         return stationName;
     }
     public void printQues( int i){
+        System.out.println("------------");
+        System.out.println(stationName);
+        System.out.println("------------");
         System.out.println(questions[i]);
         System.out.print("Enter your answer >>> ");
     }
@@ -31,13 +30,13 @@ public class Station {
     public boolean checkAns(int i, String ans){
         if(answers[i].compareToIgnoreCase(ans)==0){
             System.out.println("*********Correct answer!! You may proceed************ ");
+            System.out.println();
             return true;
         }
         else{ 
             System.out.println("*********Sorry, WRONG...*********");
             System.out.println(" You can not proceed to roll dice..Please try harder this time. ");
+            System.out.println();
             return false;
-    }}
-    
-  
+    }}  
 }

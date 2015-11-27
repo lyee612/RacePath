@@ -1,0 +1,26 @@
+Player's Path
+======================================
+Player Name: fefe
+Path: 
+Station A
+Station B
+Station C
+
+
+
+Player Name: jimmy
+Path: 
+Station A
+Station B
+Station C
+Station E
+
+
+
+Player Name: tume
+Path: 
+Station A
+Station B
+Station C
+
+

@@ -1,12 +1,18 @@
 package Java;
 import java.util.*;
 import ADT.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
 
 public class TestRace {
 
     static Scanner sc = new Scanner(System.in);
-    static int life = 5;
-    static int numOfPlayer = 0;
     
     static final String[] quesA = {"20 - 1 =", "7 * 7 =","890 * 23 =","Time is Valuable.[True(1)/False(0)]","22 % 2 ="};
     static final String[] quesB={"Human is homo-sapien.( 1=true; 0=false)", "Cooper is cute( 1=true; 0=false)",
@@ -26,52 +32,54 @@ public class TestRace {
     static final String[] ansG = {"10","320","81","64","48"};
     
     static final Station[] station ={new Station("Station A", quesA, ansA),
-                                      new Station("Station B",quesB, ansB),
-                                      new Station("Station C", quesC, ansC),
-                                      new Station("Station D",quesD, ansD),
-                                      new Station("Station E", quesE, ansE),
-                                      new Station("Station F",quesF, ansF),
-                                      new Station("Station G", quesG, ansG),};
+                                     new Station("Station B", quesB, ansB),
+                                     new Station("Station C", quesC, ansC),
+                                     new Station("Station D", quesD, ansD),
+                                     new Station("Station E", quesE, ansE),
+                                     new Station("Station F", quesF, ansF),
+                                     new Station("Station G", quesG, ansG),};
    
     static RacePath<Station> path;
     static topPlayerListInterface<Player> topList = new topPlayerList<Player>();
+    static int printPlayerPathCount=0;
     
     public static void main(String[] args) {
-         path = new RacePath<Station>();
-        mainMenu(); 
+        mainMenu();
     }
     
     public static void mainMenu(){
-      
-       path.addStation(station[0]);
-        path.addStation(station[1]);
-        path.addStation(station[2]);
-        
+        resetPath();
         welcomeBanner();
-        int choice = menu();
-        while(choice!=-1){
-            
-            if (choice==1){
-                startGame();  
-                menu();
-               }
-            else if(choice==2){
+        int choice = 0;
+        do{ // auto come back !!
+            choice = menu();
+            if (choice==1){ // start game
+                startGame();
+            }
+            else if(choice==2){ // manage path
                 managePath();
-                //managePath();
-                choice = menu();
             }   
-             else if(choice==3){
+             else if(choice==3){ //show top 10 player
                 topPlayer();
-                choice = menu();
             }
             else{
-                System.out.println("Invalid Input!!");
-                choice = menu();
+                System.out.println("Invalid Input!!");//reenter input
             }
-        
-        }endGame();
+        }while(choice!=-1);
+        endGame(); //if the choice is -1
     }
-
+     // to reset the race path after every game. 
+    public static void resetPath(){ 
+        path = new RacePath<Station>();
+        initializePath();
+    }
+    
+     //Initial the station path
+    public static void initializePath(){
+        path.addStation(station[0]);
+        path.addStation(station[1]);
+        path.addStation(station[2]);
+    }
     
     public static void welcomeBanner(){
         System.out.println("===================================");
@@ -87,88 +95,77 @@ public class TestRace {
         System.out.print("Please select your choice:");
         int choice = sc.nextInt();
         sc.nextLine();
-                
+        
         return choice;
         }
      
     public static void startGame(){
-        
         System.out.print("Please enter your name: ");
         String playerName = sc.nextLine(); 
-        
-       // topPlayerList<Player> player = new topPlayerList<Player>();
-        
         Player player = new Player(playerName);
-        
         System.out.println("===================================");
-          
+        
+        int life =5;  
         boolean proceed = true;
         boolean matched = true;
      
         while(proceed){
-             if(life<1){
-             gameOver();
-             break;
-            }
-             else{
-                String reply; 
-                String currentStation = path.getCurrentStationName();
+            String reply; 
+            String currentStation = path.getCurrentStationName();
               
-                for(int i = 0; i< 7; i++){
-                    if(station[i].getStationName().compareToIgnoreCase(currentStation)==0){
-                        do{ 
-                            if(!matched)
-                                life--;
-                            if(life<=0){
-                                gameOver();
-                                proceed=false;
-                                break;
-                            }
-                            int randomNum = randomQues();
-                            System.out.println("You now have "+ life + " life");
-                            station[i].printQues(randomNum);
-                            reply = sc.nextLine();
-                            matched = station[i].checkAns(randomNum, reply);
-                        }while(!matched);
-                        break;
-                    }
+            for(int i = 0; i< 7; i++){
+                if(station[i].getStationName().compareToIgnoreCase(currentStation)==0){
+                    do{ 
+                        if(!matched)
+                            life--;
+                        if(life<=0){ 
+                            gameOver();
+                            proceed=false;
+                            break;
+                        }
+                        int randomNum = randomQues();
+                        System.out.println("You now have "+ life + " life");
+                        station[i].printQues(randomNum);
+                        reply = sc.nextLine();
+                        matched = station[i].checkAns(randomNum, reply);
+                    }while(!matched);
+                    break;
                 }
-             System.out.println("You now have "+ life +" life.");  
+            }
              
-             if(proceed!=false&& life>0&& !path.checkWin()){
-                 proceed = getPermission();
+            if(life >=1 && !path.checkWin()){ // if life >0 only ask permission
+                System.out.println("You now have "+ life +" life.");
+                proceed = getPermission();
+            }
+            if(proceed==true && !path.checkWin()){
                 int diceValue = rollDice();
                 path.movePosition(diceValue);
-             }
-             else
-                 proceed = false;
-             }};
+            }
+            else{
+                proceed = false;
+            }
+        }
             
-         if(!proceed && !path.checkWin()){
-             System.out.println("Exiting game..");
-             path = new RacePath<Station>();
-             mainMenu();
-         }
-         if(path.checkWin()&&life>=1){
-             System.out.println("Congratulations!! You Won!!! ");
-             long result = player.calculateResult();
-             System.out.println("You used "+ result + " seconds to finish the game!!.");
-             System.out.println(topList.addPlayerToList(player));
-             System.out.println("\n===================");
-            System.out.println("Top 10 Player");
-            System.out.println("===================");
-            System.out.println("No. \tPlayer Name\tTime Used(s)");
-            System.out.println("--------------------------------------");
-            System.out.println(topList.displayRanking());
-            System.out.println();
-             path = new RacePath<Station>();
-             //numOfPlayer++;
-             mainMenu();
-             
-         }}    
+        if(!proceed && !path.checkWin() && life >=1){ //if the player no die only print
+            System.out.println("Exiting game..");
+            resetPath();
+        }
+         
+        if(path.checkWin()&&life>=1){
+            System.out.println("Congratulations!! You Won!!! ");
+            long result = player.calculateResult();
+            System.out.println("You used "+ result + " seconds to finish the game!!.");
+            topList.addPlayerToList(player);
+            topPlayer();
+            printPlayerTextFile();
+            printPlayerPathTextFile(playerPathTextFormat(playerName));
+            path = new RacePath<Station>();
+            resetPath();
+        }
+    }    
     
     public static boolean getPermission(){
-        System.out.println("Enter positive number to roll a dice (-1 to exit game):");
+        System.out.print("Enter positive number to roll a dice (-1 to exit game):");
         int val =  sc.nextInt();
         sc.nextLine();
         if (val>0)
@@ -179,98 +176,121 @@ public class TestRace {
     
     public static int rollDice(){
         Random random = new Random();
-         int dice = random.nextInt(5) -2 ;
-         if (dice==0){
-             dice = rollDice();
-         }
-         else
-         System.out.println("Your dice number is :" + dice);
-         return dice;
+        int dice =0;
+        while(dice == 0){
+            dice = random.nextInt(5) -2;
+        }
+        System.out.println("Your dice number is >>> " + dice);
+        return dice;
     }
     
     public static int randomQues(){
         Random random = new Random();
-        int randomValue = random.nextInt(4);
+        int randomValue = random.nextInt(5);
         return randomValue;
     }
     
     public static void managePath(){
-        currentStation(path);
-        System.out.println("=================================");
-        System.out.println("1. Add Station (1)");
-        System.out.println("2. Delete Station (2)");
-        System.out.println("3. Back (3)");
-        int choice = sc.nextInt();
-        sc.nextLine();
-        if (choice ==1 ){
-            System.out.print("Enter Station (A-G : enter one) :");
-            String stationName = "Station "+ sc.nextLine().toUpperCase();
-            switch(stationName){
-                case "Station A":
-                   path.addStation(station[0]);
-                    break;
-                case "Station B":
-                   path.addStation(station[1]);
-                    break;
-                case "Station C":
-                   path.addStation(station[2]);
-                    break;
-                case "Station D":
-                   path.addStation(station[3]);
-                    break;
-                case "Station E":
-                   path.addStation(station[4]);
-                    break;
-                case "Station F":
-                   path.addStation(station[5]);
-                    break;
-                case "Station G":
-                   path.addStation(station[6]);
-                    break;
-                default:
+        int choice =0;
+        while(choice != 3){ // put this while ... no more managePath(); and choice == 3
+            currentStation(path);
+            System.out.println("=================================");
+            System.out.println("1. Add Station (1)");
+            System.out.println("2. Delete Station (2)");
+            System.out.println("3. Back (3)");
+            System.out.print("Please select your choice:");
+            choice = sc.nextInt();
+            sc.nextLine();
+            if (choice ==1 ){
+                System.out.print("Enter Station (A-G : enter one) :");
+                String stationName = "Station "+ sc.nextLine().toUpperCase();
+               
+                if(!path.isExits(stationName)){ // check whether station already exist in path
+                    switch(stationName){
+                        case "Station A":
+                            path.addStation(station[0]);
+                            break;
+                        case "Station B":
+                            path.addStation(station[1]);
+                            break;
+                        case "Station C":
+                            path.addStation(station[2]);
+                            break;
+                        case "Station D":
+                            path.addStation(station[3]);
+                            break;
+                        case "Station E":
+                            path.addStation(station[4]);
+                            break;
+                        case "Station F":
+                            path.addStation(station[5]);
+                            break;
+                        case "Station G":
+                            path.addStation(station[6]);
+                            break;
+                        default:
+                            System.out.println("Station adding failed..\n");
+                    }
+                }
+                else{ // if station already exist in the path.
+                    System.out.println("Station is exits..");
                     System.out.println("Station adding failed..\n");
+                }
             }
-            managePath();        
-        }
-        else if(choice ==2 ){
-            System.out.print("Enter Station to delete(A-G: enter one) : ");
-            String stationDelete = "Station "+sc.next().toUpperCase();
-            boolean found= false;
-            for(int i=0;i<path.getNumOfStations();i++){
-                if(stationDelete.compareToIgnoreCase(station[i].getStationName())==0){
-                    found=true;
-                    path.removeStation(station[i]);
-                    System.out.println( stationDelete + " is succeccfully deleted from Race Path");
-            }}
-            if(!found){
-                System.out.println("Station not exits..");
-                System.out.println("Station deleting failed..\n");
+            else if(choice ==2 ){ // delete station from path
+                System.out.print("Enter Station to delete(A-G, enter one) >>  ");
+                String stationDelete = "Station "+sc.next().toUpperCase();
+                boolean found= false;
+                Station temp= station[0];
+                for(int i=0;i<7;i++){
+                    if(path.findStation(i).compareToIgnoreCase("") == 0){
+                        break;
+                    }
+                    if(stationDelete.compareToIgnoreCase(path.findStation(i))==0){ // match the stationDelete in path
+                        // find the station to be deleted from race path
+                        for(int k=0;k<7;k++){
+                            if(station[k].getStationName().compareTo(path.findStation(i))==0){ 
+                                temp = station[k];
+                                break;
+                            }
+                        }
+                        found=true;
+                        path.removeStation(temp); //pass in the found station to be deleted into removeStation.
+                        System.out.println( stationDelete + " is succeccfully deleted from Race Path");
+                        break;
+                    }
+                }
+                if(!found){
+                    System.out.println("Station not exits..");
+                    System.out.println("Station deleting failed..\n");
+                }
+
             }
-            managePath();
-        }
-        else if(choice==3)
-            mainMenu();
-        else{
-            System.out.println("Invalid Input..");
-            managePath();
-            
-    }   //end if-else statement
+            else if(choice ==3){
+                break;
+            }
+            else{
+                System.out.println("Invalid Input..");
+            }
+        }   //end if-else statement
     }//end managePath()
     
-     public static void currentStation(RacePath path){
-           System.out.println("Current Stations in Race Path :");
-            System.out.println("=================================");
-            System.out.println(path.toString()); 
-        }
+    public static void currentStation(RacePath path){
+        System.out.println("Current Stations in Race Path :");
+        System.out.println("=================================");
+        System.out.println("******STARTING POINT******");
+        System.out.println(path.toString()); 
+        System.out.println("******FINISHING LINE******");
+    }
     
     public static void topPlayer(){
-            System.out.println("\n===================");
-            System.out.println("Top 10 Player");
-            System.out.println("===================");
-            System.out.println("No. \tPlayer Name\tTime Used(s)");
-            System.out.println("--------------------------------------");
-            System.out.println(topList.displayRanking());
-            System.out.println();
+        System.out.println("\n=====================================");
+        System.out.println("Top 10 Player");
+        System.out.println("=====================================");
+        System.out.println("No. \tPlayer Name\tTime Used(s)");
+        System.out.println("--------------------------------------");
+        System.out.println(topList.displayRanking());
+        System.out.println();
     }
     
     public static void endGame(){
@@ -283,8 +303,57 @@ public class TestRace {
         System.out.println("You have 0 life left..");
         System.out.println("Game Over!!");
         System.out.println("Try again next time. ^o^");
-        path = new RacePath<Station>();
-       
+        resetPath();
+    }
+    
+    public static String playerPathTextFormat(String playerName){
+        String str = "";
+        str += "\nPlayer Name: " + playerName + "\n" + "Path: \n" + path.toString()+"\n";
+        return str;
+    }
+    
+     public static void printPlayerTextFile(){
+         String formatText = topList.displayRanking().replaceAll("\n", System.lineSeparator());
+         try{
+             FileWriter writer = new FileWriter(new File("Top Player.txt"),false);
+             BufferedWriter bw = new BufferedWriter(writer);
+             bw.write("Top 10 Player");
+             bw.newLine();
+             bw.write("=====================================");
+             bw.newLine();
+             bw.write("No. \tPlayer Name\tTime Used(s)");
+             bw.newLine();
+             bw.write("--------------------------------------");
+             bw.newLine();
+             bw.write(formatText);
+             bw.close();
+             writer.close();
+         }
+         catch(IOException e){
+                System.out.println("Error in printing to text file..");
+         }
+     }
+    
+    public static void printPlayerPathTextFile(String text){
+        String formatText = text.replaceAll("\n", System.lineSeparator());
+        try{
+            if(printPlayerPathCount==0){
+                FileWriter writer = new FileWriter(new File("Player Path.txt"),false);
+                BufferedWriter bw = new BufferedWriter(writer);
+                bw.write("Player's Path");
+                bw.newLine();
+                bw.write("======================================");
+                bw.close();
+                writer.close();
+            }
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("Player Path.txt", true)));
+             out.println(formatText); 
+             out.close();
+             printPlayerPathCount++;
+        }
+        catch (IOException e){
+            System.out.println("Error in printing to text file..");
+        }  
     }
 }
 
