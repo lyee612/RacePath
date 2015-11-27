@@ -1,7 +1,0 @@
-Top 10 Player
-=====================================
-No. 	Player Name	Time Used(s)
---------------------------------------
-1	fefe		16 seconds.
-2	jimmy		53 seconds.
-3	tume		53 seconds.

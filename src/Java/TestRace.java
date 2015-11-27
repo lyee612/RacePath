@@ -1,33 +1,34 @@
 package Java;
+/**
+ *
+ * @author LiYee,ZhenYee,SweeYong
+ */
 import java.util.*;
 import ADT.*;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Writer;
 
 public class TestRace {
 
     static Scanner sc = new Scanner(System.in);
     
-    static final String[] quesA = {"20 - 1 =", "7 * 7 =","890 * 23 =","Time is Valuable.[True(1)/False(0)]","22 % 2 ="};
-    static final String[] quesB={"Human is homo-sapien.( 1=true; 0=false)", "Cooper is cute( 1=true; 0=false)",
+    static final String[] quesA = {"20 - 1 =", "7 * 7 =","890 * 23 =","72 + 88 =","22 % 2 ="};
+    static final String[] quesB={"80 % 6 =", "902 - 872 =",
                                  "1242 - 901 =","7232 - 22=","672 * 90 ="};
     static final String[] quesC = {"log10 / log2 = (round to 2 dp)", "2 ^ 3= ", "3 * 7 = ","Any number can divide by 0? [Can(1)/Cannot(0)]","3 ^ 3 = "};
-    static final String[] quesD = {"5+|-11|+11 = ", "-8+5(2-4) = ", "48/(-4)^2 + (-9) = ", "-15-(-7) = ","7+(-17)+4 = "};
-    static final String[] quesE = {"2w+w = ", "3w + 4(2+w) = ", "5(w+1) +2 = ", "6w+18w = ", "2w+3(5w+2) = "};
-    static final String[] quesF = {"3(v+w) = ", "2(2v-3w) = ", "(8v+8w)/(2v+2w) = ","2(5v+3w) = ","2(6v)+w = "};
+    static final String[] quesD = {"5 + |-11| + 11 = ", "-8 + 5(2-4) = ", "48 / (-4)^2 + (-9) = ", "-15 -(-7) = ","7+(-17)+4 = "};
+    static final String[] quesE = {"2w + w = ", "3w + 4(2+w) = ", "5(w+1) +2 = ", "6w + 18w = ", "2w + 3(5w+2) = "};
+    static final String[] quesF = {"3(v+w) = ", "2(2v-3w) = ", "(8v + 8w)/(2v + 2w) = ","2(5v + 3w) = ","2(6v) + w = "};
     static final String[] quesG = {"50 * 0.2 = ", "4 * 80 = ", "9 * 9 = ", "4 * 4 * 4 = ", "3 * 8 * 2 = "};
     
-    static final String[] ansA = {"19", "49","20470","0","0"};
-    static final String[] ansB = {"1", "1", "341", "7210","60480"};
+    static final String[] ansA = {"19", "49","20470","160","0"};
+    static final String[] ansB = {"2", "30", "341", "7210","60480"};
     static final String[] ansC = {"3.32","8","21","0","27"};
     static final String[] ansD = {"27","-18","-6","-8","-6"};
-    static final String[] ansE = {"3w","7w+8","5w+7","24w","17w+6"};
+    static final String[] ansE = {"3w","7w+8","5w + 7","24w","17w+6"};
     static final String[] ansF = {"3v+3w","4v-6w","4","10v+6w","12v+w"};
     static final String[] ansG = {"10","320","81","64","48"};
     
@@ -41,10 +42,12 @@ public class TestRace {
    
     static RacePath<Station> path;
     static topPlayerListInterface<Player> topList = new topPlayerList<Player>();
-    static int printPlayerPathCount=0;
+    static boolean firstTimePrintPlayer = false;
     
     public static void main(String[] args) {
-        mainMenu();
+        printQuestionTextFile();
+        printAnswerTextFile();
+        //mainMenu();
     }
     
     public static void mainMenu(){
@@ -153,8 +156,8 @@ public class TestRace {
          
         if(path.checkWin()&&life>=1){
             System.out.println("Congratulations!! You Won!!! ");
-            long result = player.calculateResult();
-            System.out.println("You used "+ result + " seconds to finish the game!!.");
+            player.calculateResult();
+            System.out.println("You used "+ player.getResult() + " seconds to finish the game!!.");
             topList.addPlayerToList(player);
             topPlayer();
             printPlayerTextFile();
@@ -297,6 +300,8 @@ public class TestRace {
         System.out.println("============================");
         System.out.println("Thanks for playing!!");
         System.out.println("See you again!!");
+        System.out.println("This game is brought to you by Cooper Games INC.");
+        System.out.println("Developed by FoongLY, LuZY and HoSY");
     }
     
     public static void gameOver(){
@@ -337,7 +342,7 @@ public class TestRace {
     public static void printPlayerPathTextFile(String text){
         String formatText = text.replaceAll("\n", System.lineSeparator());
         try{
-            if(printPlayerPathCount==0){
+            if(!firstTimePrintPlayer){ //if is first time printing to text file, create a file with header 
                 FileWriter writer = new FileWriter(new File("Player Path.txt"),false);
                 BufferedWriter bw = new BufferedWriter(writer);
                 bw.write("Player's Path");
@@ -346,14 +351,169 @@ public class TestRace {
                 bw.close();
                 writer.close();
             }
+            //append player's path data to "Player Path.txt" 
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("Player Path.txt", true)));
              out.println(formatText); 
              out.close();
-             printPlayerPathCount++;
+             firstTimePrintPlayer=true;
         }
         catch (IOException e){
             System.out.println("Error in printing to text file..");
         }  
+    }
+    public static void printQuestionTextFile(){
+         try{
+             FileWriter writer = new FileWriter(new File("Questions.txt"),false);
+             BufferedWriter bw = new BufferedWriter(writer);
+             bw.write("Questions in Stations ");
+             bw.newLine();
+             bw.write("=======================");
+             bw.newLine();
+             bw.write("Station A Questions");
+             bw.newLine();
+             bw.write("---------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+quesA[i].toString());
+                bw.newLine();
+             }
+             bw.newLine();
+             bw.write("Station B Questions");
+             bw.newLine();
+             bw.write("---------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+quesB[i].toString());
+                bw.newLine();
+             }
+             bw.newLine();
+             bw.write("Station C Questions");
+             bw.newLine();
+             bw.write("---------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+quesC[i].toString());
+                bw.newLine();
+             }
+             bw.newLine();
+             bw.write("Station D Questions");
+             bw.newLine();
+             bw.write("---------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+quesD[i].toString());
+                bw.newLine();
+             }
+             bw.newLine();
+             bw.write("Station E Questions");
+             bw.newLine();
+             bw.write("---------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+quesE[i].toString());
+                bw.newLine();
+             }
+             bw.newLine();
+             bw.write("Station F Questions");
+             bw.newLine();
+             bw.write("---------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+quesF[i].toString());
+                bw.newLine();
+             }
+             bw.newLine();
+             bw.write("Station G Questions");
+             bw.newLine();
+             bw.write("---------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+quesG[i].toString());
+                bw.newLine();
+             }
+             bw.close();
+             writer.close();
+         }
+         catch(IOException e){
+                System.out.println("Error in printing to text file..");
+         }
+     }
+    public static void printAnswerTextFile(){
+        try{
+             FileWriter writer = new FileWriter(new File("Answers.txt"),false);
+             BufferedWriter bw = new BufferedWriter(writer);
+             bw.write("Answers for Questions in Stations ");
+             bw.newLine();
+             bw.write("====================================");
+             bw.newLine();
+             bw.write("Station A Question's Answers:");
+             bw.newLine();
+             bw.write("------------------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+ansA[i].toString());
+                bw.newLine();
+             }
+             bw.newLine();
+             bw.write("Station B Question's Answers:");
+             bw.newLine();
+             bw.write("------------------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+ansB[i].toString());
+                bw.newLine();
+             }
+             bw.newLine();
+             bw.write("Station C Question's Answers:");
+             bw.newLine();
+             bw.write("------------------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+ansC[i].toString());
+                bw.newLine();
+             }
+             bw.newLine();
+             bw.write("Station D Question's Answers:");
+             bw.newLine();
+             bw.write("------------------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+ansD[i].toString());
+                bw.newLine();
+             }
+             bw.newLine();
+             bw.write("Station E Question's Answers:");
+             bw.newLine();
+             bw.write("------------------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+ansE[i].toString());
+                bw.newLine();
+             }
+             bw.newLine();
+             bw.write("Station F Question's Answers:");
+             bw.newLine();
+             bw.write("------------------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+ansF[i].toString());
+                bw.newLine();
+             }
+             bw.newLine();
+             bw.write("Station F Question's Answers:");
+             bw.newLine();
+             bw.write("------------------------------");
+             bw.newLine();
+             for(int i = 0;i<=4;i++){
+                bw.write((i+1)+".  "+ansG[i].toString());
+                bw.newLine();
+             }
+             bw.close();
+             writer.close();
+         }
+         catch(IOException e){
+                System.out.println("Error in printing to text file..");
+         }
     }
 }
 

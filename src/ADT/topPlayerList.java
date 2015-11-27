@@ -3,10 +3,7 @@ package ADT;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.*;
-/**
- *
- * @author lyee
- */
+
 public class topPlayerList<T> implements topPlayerListInterface<T> {
  
     private Node firstNode;
@@ -32,24 +29,23 @@ public class topPlayerList<T> implements topPlayerListInterface<T> {
                         Player existPlayer = (Player) currentNode.data;
                         //compare old player time and new player time
                         if( newPlayer.getResult()<existPlayer.getResult()){
-                            //if top node result greater than new node result
-                            if(i==0){
+                            //if firstNode duration longer than newNode 
+                            if(i==0){ 
                                 newNode.next = currentNode;
                                 firstNode = newNode; // new entry will be the head 
                                 success= true;
-                                existPlayer = (Player) currentNode.data;
                                 break;
                             }
-                            else{
+                            else{ 
                                 newNode.next = currentNode;
                                 beforeNode.next = newNode; //new entry will be inserted into middle of node
                                 success = true;
                                 break;
                             }
                         }
-                        else{ // move to compare new node with next existing node
+                        else{ // new player duration is longer than existing player 
                             beforeNode = currentNode;
-                            currentNode = currentNode.next;
+                            currentNode = currentNode.next;  // move to compare new node with next existing node
                             if(currentNode==null){
                                 beforeNode.next=newNode;
                                 newNode=currentNode;
@@ -62,7 +58,7 @@ public class topPlayerList<T> implements topPlayerListInterface<T> {
         return success; // return false if adding to list failed..
     } // end of addPlayerToList()
        
-    @Override
+    @Override //return list of player in ranking
     public String displayRanking(){
         String outputStr = "";
         Node tempNode = firstNode;
@@ -76,7 +72,7 @@ public class topPlayerList<T> implements topPlayerListInterface<T> {
         return outputStr;
     }
 
-    @Override
+    @Override //check whether any player exist in ranking
     public boolean isEmpty() {
         return firstNode == null;
     }
