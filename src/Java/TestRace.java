@@ -14,7 +14,8 @@ import java.io.PrintWriter;
 public class TestRace {
 
     static Scanner sc = new Scanner(System.in);
-    
+   
+    //initialized questions for specific station
     static final String[] quesA = {"20 - 1 =", "7 * 7 =","890 * 23 =","72 + 88 =","22 % 2 ="};
     static final String[] quesB={"80 % 6 =", "902 - 872 =",
                                  "1242 - 901 =","7232 - 22=","672 * 90 ="};
@@ -23,7 +24,8 @@ public class TestRace {
     static final String[] quesE = {"2w + w = ", "3w + 4(2+w) = ", "5(w+1) +2 = ", "6w + 18w = ", "2w + 3(5w+2) = "};
     static final String[] quesF = {"3(v+w) = ", "2(2v-3w) = ", "(8v + 8w)/(2v + 2w) = ","2(5v + 3w) = ","2(6v) + w = "};
     static final String[] quesG = {"50 * 0.2 = ", "4 * 80 = ", "9 * 9 = ", "4 * 4 * 4 = ", "3 * 8 * 2 = "};
-    
+   
+    //initialise answer for each questions 
     static final String[] ansA = {"19", "49","20470","160","0"};
     static final String[] ansB = {"2", "30", "341", "7210","60480"};
     static final String[] ansC = {"3.32","8","21","0","27"};
@@ -32,6 +34,7 @@ public class TestRace {
     static final String[] ansF = {"3v+3w","4v-6w","4","10v+6w","12v+w"};
     static final String[] ansG = {"10","320","81","64","48"};
     
+    //initialise station with relevent questions and answer
     static final Station[] station ={new Station("Station A", quesA, ansA),
                                      new Station("Station B", quesB, ansB),
                                      new Station("Station C", quesC, ansC),
@@ -41,17 +44,18 @@ public class TestRace {
                                      new Station("Station G", quesG, ansG),};
    
     static RacePath<Station> path;
-    static topPlayerListInterface<Player> topList = new topPlayerList<Player>();
-    static boolean firstTimePrintPlayer = false;
+    static topPlayerListInterface<Player> topList = new topPlayerList<Player>(); //create new topPlayerList
+    static boolean firstTimePrintPlayer = false; //indicate first time printing to text file
     
     public static void main(String[] args) {
-        printQuestionTextFile();
-        printAnswerTextFile();
+        printQuestionTextFile(); //print question to text file
+        printAnswerTextFile(); //print answer to text file
         mainMenu();
     }
     
+    // where user can choose what to do in the game
     public static void mainMenu(){
-        resetPath();
+        resetPath(); //reset to new path
         welcomeBanner();
         int choice = 0;
         do{ // auto come back !!
@@ -71,13 +75,13 @@ public class TestRace {
         }while(choice!=-1);
         endGame(); //if the choice is -1
     }
-     // to reset the race path after every game. 
+     // to reset the race path before and after every game. 
     public static void resetPath(){ 
         path = new RacePath<Station>();
-        initializePath();
+        initializePath(); 
     }
     
-     //Initial the station path
+     //Initialise default station to path
     public static void initializePath(){
         path.addStation(station[0]);
         path.addStation(station[1]);
@@ -89,6 +93,7 @@ public class TestRace {
         System.out.println("Welcome to Cooper Games Inc.!!");
     }
     
+    //player choose what to do with the game
     public static int menu(){
         System.out.println("===================================");
         System.out.println("1. Start Game (1)");
@@ -104,20 +109,20 @@ public class TestRace {
      
     public static void startGame(){
         System.out.print("Please enter your name: ");
-        String playerName = sc.nextLine(); 
-        Player player = new Player(playerName);
+        String playerName = sc.nextLine();  //get player name
+        Player player = new Player(playerName); //create  new player with player name
         System.out.println("===================================");
         
-        int life =5;  
-        boolean proceed = true;
+        int life =5;  //player's chances of getting wrong
+        boolean proceed = true;  
         boolean matched = true;
      
         while(proceed){
             String reply; 
-            String currentStation = path.getCurrentStationName();
+            String currentStation = path.getCurrentStationName(); //get player's current location in path
               
             for(int i = 0; i< 7; i++){
-                if(station[i].getStationName().compareToIgnoreCase(currentStation)==0){
+                if(station[i].getStationName().compareToIgnoreCase(currentStation)==0){ //compare current station name with station name to get question
                     do{ 
                         if(!matched)
                             life--;
@@ -126,11 +131,11 @@ public class TestRace {
                             proceed=false;
                             break;
                         }
-                        int randomNum = randomQues();
+                        int randomNum = randomQues(); //get random number to print question
                         System.out.println("You now have "+ life + " life");
-                        station[i].printQues(randomNum);
+                        station[i].printQues(randomNum); //get question based on random num
                         reply = sc.nextLine();
-                        matched = station[i].checkAns(randomNum, reply);
+                        matched = station[i].checkAns(randomNum, reply); //check whether player got the correct answer
                     }while(!matched);
                     break;
                 }
@@ -138,9 +143,9 @@ public class TestRace {
              
             if(life >=1 && !path.checkWin()){ // if life >0 only ask permission
                 System.out.println("You now have "+ life +" life.");
-                proceed = getPermission();
+                proceed = getPermission(); //ask whether player want to continue game or not
             }
-            if(proceed==true && !path.checkWin()){
+            if(proceed==true && !path.checkWin()){ //if player want to proceed and haven't reach finishing line
                 int diceValue = rollDice();
                 path.movePosition(diceValue);
             }
@@ -151,24 +156,30 @@ public class TestRace {
             
         if(!proceed && !path.checkWin() && life >=1){ //if the player no die only print
             System.out.println("Exiting game..");
-            resetPath();
+            resetPath(); //reset the path and initialise default station to path
         }
          
         if(path.checkWin()&&life>=1){
             System.out.println("Congratulations!! You Won!!! ");
-            player.calculateResult();
+            player.calculateResult(); //get time duration 
             System.out.println("You used "+ player.getResult() + " seconds to finish the game!!.");
-            topList.addPlayerToList(player);
-            topPlayer();
-            printPlayerTextFile();
+            topList.addPlayerToList(player); //add player to topPlayerList
+            topPlayer(); //show current top 10 player list
+            printPlayerTextFile();  
             printPlayerPathTextFile(playerPathTextFormat(playerName));
             path = new RacePath<Station>();
             resetPath();
         }
     }    
     
+    //get player permission to continue game
     public static boolean getPermission(){
-        System.out.print("Enter positive number to roll a dice (-1 to exit game):");
+        System.out.print("Enter positive number to roll a dice (-1 to exit game) >>");
+        while(!sc.hasNextInt()){ //if player did not enter the corrent format of input
+            System.out.println("Invalid Input");
+            System.out.print("Enter positive number to roll a dice (-1 to exit game) >>");
+            sc.next();
+        }
         int val =  sc.nextInt();
         sc.nextLine();
         if (val>0)
@@ -176,12 +187,13 @@ public class TestRace {
         else 
             return false;
     }
-    
+   
+    //get random dice value
     public static int rollDice(){
         Random random = new Random();
         int dice =0;
-        while(dice == 0){
-            dice = random.nextInt(5) -2;
+        while(dice == 0){ //if dice value is 0, then throw dice again
+            dice = random.nextInt(5) -2; //get value [0,5] and then subtract by 2 to get [-2,3]
         }
         System.out.println("Your dice number is >>> " + dice);
         return dice;
@@ -189,13 +201,13 @@ public class TestRace {
     
     public static int randomQues(){
         Random random = new Random();
-        int randomValue = random.nextInt(5);
+        int randomValue = random.nextInt(4); //get random value of [0-4]
         return randomValue;
     }
     
     public static void managePath(){
         int choice =0;
-        while(choice != 3){ // put this while ... no more managePath(); and choice == 3
+        while(choice != 3){ // show menu as long as choice != 3 (back to main menu)
             currentStation(path);
             System.out.println("=================================");
             System.out.println("1. Add Station (1)");
@@ -204,32 +216,43 @@ public class TestRace {
             System.out.print("Please select your choice:");
             choice = sc.nextInt();
             sc.nextLine();
-            if (choice ==1 ){
+            if (choice ==1 ){ //add station to path at tail of node
                 System.out.print("Enter Station (A-G : enter one) :");
+                while(!sc.hasNext("[abcdefg]")&&!sc.hasNext("[ABCDEFG]")){ //check format of user input
+                    System.out.println("Invalid station name");
+                    System.out.print("Enter Station (A-G : enter one) :");
+                    sc.next();
+                }
                 String stationName = "Station "+ sc.nextLine().toUpperCase();
-               
                 if(!path.isExits(stationName)){ // check whether station already exist in path
-                    switch(stationName){
+                    switch(stationName){ //find station to added into path by switching stationName
                         case "Station A":
                             path.addStation(station[0]);
+                            System.out.println("Station A is successfully added!!");
                             break;
                         case "Station B":
                             path.addStation(station[1]);
+                            System.out.println("Station B is successfully added!!");
                             break;
                         case "Station C":
                             path.addStation(station[2]);
+                            System.out.println("Station C is successfully added!!");
                             break;
                         case "Station D":
                             path.addStation(station[3]);
+                            System.out.println("Station D is successfully added!!");
                             break;
                         case "Station E":
                             path.addStation(station[4]);
+                            System.out.println("Station E is successfully added!!");
                             break;
                         case "Station F":
                             path.addStation(station[5]);
+                            System.out.println("Station F is successfully added!!");
                             break;
                         case "Station G":
                             path.addStation(station[6]);
+                            System.out.println("Station G is successfully added!!");
                             break;
                         default:
                             System.out.println("Station adding failed..\n");
@@ -242,11 +265,16 @@ public class TestRace {
             }
             else if(choice ==2 ){ // delete station from path
                 System.out.print("Enter Station to delete(A-G, enter one) >>  ");
+                while(!sc.hasNext("[ABCDEFG]")&&!sc.hasNext("[abcdefg]")){ //check format of user input
+                    System.out.println("Invalid station name");
+                    System.out.print("Enter Station (A-G : enter one) :");
+                    sc.next();
+                }
                 String stationDelete = "Station "+sc.next().toUpperCase();
                 boolean found= false;
                 Station temp= station[0];
                 for(int i=0;i<7;i++){
-                    if(path.findStation(i).compareToIgnoreCase("") == 0){
+                    if(path.findStation(i).compareToIgnoreCase("") == 0){ //if station is null in path 
                         break;
                     }
                     if(stationDelete.compareToIgnoreCase(path.findStation(i))==0){ // match the stationDelete in path
@@ -263,21 +291,21 @@ public class TestRace {
                         break;
                     }
                 }
-                if(!found){
+                if(!found){ //if station to be deleted is not found in current path
                     System.out.println("Station not exits..");
                     System.out.println("Station deleting failed..\n");
                 }
-
             }
-            else if(choice ==3){
+            else if(choice ==3){ //back to main menu
                 break;
             }
-            else{
+            else{ //invalid input
                 System.out.println("Invalid Input..");
             }
         }   //end if-else statement
     }//end managePath()
     
+    //show current station exist in path
     public static void currentStation(RacePath path){
         System.out.println("Current Stations in Race Path :");
         System.out.println("=================================");
@@ -286,6 +314,7 @@ public class TestRace {
         System.out.println("******FINISHING LINE******");
     }
     
+    //show current top player list
     public static void topPlayer(){
         System.out.println("\n=====================================");
         System.out.println("Top 10 Player");
@@ -296,6 +325,7 @@ public class TestRace {
         System.out.println();
     }
     
+    //end game/exit program
     public static void endGame(){
         System.out.println("============================");
         System.out.println("Thanks for playing!!");
@@ -304,6 +334,7 @@ public class TestRace {
         System.out.println("Developed by FoongLY, LuZY and HoSY");
     }
     
+    // when player's life ==0
     public static void gameOver(){
         System.out.println("You have 0 life left..");
         System.out.println("Game Over!!");
@@ -311,6 +342,7 @@ public class TestRace {
         resetPath();
     }
     
+    // formatting string to print information into "Player Path.txt"
     public static String playerPathTextFormat(String playerName){
         String str = "";
         str += "\nPlayer Name: " + playerName + "\n" + "Path: \n" + path.toString()+"\n";
@@ -373,7 +405,7 @@ public class TestRace {
              bw.newLine();
              bw.write("---------------------");
              bw.newLine();
-             for(int i = 0;i<=4;i++){
+             for(int i = 0;i<=4;i++){ //there are all 5 questions, so loop 5 times
                 bw.write((i+1)+".  "+quesA[i].toString());
                 bw.newLine();
              }
