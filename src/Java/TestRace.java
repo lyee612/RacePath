@@ -69,6 +69,9 @@ public class TestRace {
              else if(choice==3){ //show top 10 player
                 topPlayer();
             }
+             else if(choice==4){
+                 break;
+             }
             else{
                 System.out.println("Invalid Input!!");//reenter input
             }
@@ -101,6 +104,11 @@ public class TestRace {
         System.out.println("3. Top 10 Player (3)");
         System.out.println("4. Exit (-1)");
         System.out.print("Please select your choice:");
+        while(!sc.hasNextInt()){ //if player did not enter the correct format of input
+            System.out.println("Invalid Input");
+            System.out.print("Please enter 1/2/3/-1 only >>");
+            sc.next();
+        }
         int choice = sc.nextInt();
         sc.nextLine();
         
@@ -108,12 +116,20 @@ public class TestRace {
         }
      
     public static void startGame(){
+        System.out.println("Games Rule");
+        System.out.println("-------------");
+        System.out.println("1. You have 5 life");
+        System.out.println("2. You must answer one question correct to proceed to roll dice.");
+        System.out.println("3. Every wrong answer will cost you 1 life.");
+        System.out.println("Start Game!!");
+        System.out.println("*****************************");
+        System.out.println();
         System.out.print("Please enter your name: ");
         String playerName = sc.nextLine();  //get player name
         Player player = new Player(playerName); //create  new player with player name
         System.out.println("===================================");
         
-        int life =5;  //player's chances of getting wrong
+        int life =5;  //players initially got 5 life
         boolean proceed = true;  
         boolean matched = true;
      
@@ -124,9 +140,9 @@ public class TestRace {
             for(int i = 0; i< 7; i++){
                 if(station[i].getStationName().compareToIgnoreCase(currentStation)==0){ //compare current station name with station name to get question
                     do{ 
-                        if(!matched)
+                        if(!matched) //if player's answer is not correct
                             life--;
-                        if(life<=0){ 
+                        if(life<=0){ //if player's life <= 0
                             gameOver();
                             proceed=false;
                             break;
@@ -141,13 +157,13 @@ public class TestRace {
                 }
             }
              
-            if(life >=1 && !path.checkWin()){ // if life >0 only ask permission
+            if(life >=1 && !path.checkWin()){ // if life >0 && player haven't win only continue
                 System.out.println("You now have "+ life +" life.");
                 proceed = getPermission(); //ask whether player want to continue game or not
             }
             if(proceed==true && !path.checkWin()){ //if player want to proceed and haven't reach finishing line
                 int diceValue = rollDice();
-                path.movePosition(diceValue);
+                path.movePosition(diceValue); //move current position in path based on diceValue
             }
             else{
                 proceed = false;
@@ -175,14 +191,14 @@ public class TestRace {
     //get player permission to continue game
     public static boolean getPermission(){
         System.out.print("Enter positive number to roll a dice (-1 to exit game) >>");
-        while(!sc.hasNextInt()){ //if player did not enter the corrent format of input
+        while(!sc.hasNextInt()){ //if player did not enter the correct format of input
             System.out.println("Invalid Input");
             System.out.print("Enter positive number to roll a dice (-1 to exit game) >>");
             sc.next();
         }
         int val =  sc.nextInt();
         sc.nextLine();
-        if (val>0)
+        if (val>=0)
             return true;
         else 
             return false;
@@ -213,10 +229,18 @@ public class TestRace {
             System.out.println("1. Add Station (1)");
             System.out.println("2. Delete Station (2)");
             System.out.println("3. Back (3)");
-            System.out.print("Please select your choice:");
+            System.out.print("Please select your choice (1/2/3) :");
+            while(!sc.hasNextInt()){ //if player did not enter the correct format of input
+            System.out.println("Invalid Input");
+            System.out.print("Please select your choice (1/2/3) :");
+            sc.next();
+            System.out.println();
+        }
             choice = sc.nextInt();
             sc.nextLine();
             if (choice ==1 ){ //add station to path at tail of node
+                System.out.println("Add Station");
+                System.out.println("---------------");
                 System.out.print("Enter Station (A-G : enter one) :");
                 while(!sc.hasNext("[abcdefg]")&&!sc.hasNext("[ABCDEFG]")){ //check format of user input
                     System.out.println("Invalid station name");
@@ -224,35 +248,28 @@ public class TestRace {
                     sc.next();
                 }
                 String stationName = "Station "+ sc.nextLine().toUpperCase();
-                if(!path.isExits(stationName)){ // check whether station already exist in path
+                if(!path.isExist(stationName)){ // check whether station already exist in path
                     switch(stationName){ //find station to added into path by switching stationName
                         case "Station A":
                             path.addStation(station[0]);
-                            System.out.println("Station A is successfully added!!");
                             break;
                         case "Station B":
                             path.addStation(station[1]);
-                            System.out.println("Station B is successfully added!!");
                             break;
                         case "Station C":
                             path.addStation(station[2]);
-                            System.out.println("Station C is successfully added!!");
                             break;
                         case "Station D":
                             path.addStation(station[3]);
-                            System.out.println("Station D is successfully added!!");
                             break;
                         case "Station E":
                             path.addStation(station[4]);
-                            System.out.println("Station E is successfully added!!");
                             break;
                         case "Station F":
                             path.addStation(station[5]);
-                            System.out.println("Station F is successfully added!!");
                             break;
                         case "Station G":
                             path.addStation(station[6]);
-                            System.out.println("Station G is successfully added!!");
                             break;
                         default:
                             System.out.println("Station adding failed..\n");
@@ -262,8 +279,11 @@ public class TestRace {
                     System.out.println("Station is exits..");
                     System.out.println("Station adding failed..\n");
                 }
+                System.out.println("Total Stations in path :" + path.getNumOfStations());
             }
             else if(choice ==2 ){ // delete station from path
+                System.out.println("Delete Station");
+                System.out.println("---------------");
                 System.out.print("Enter Station to delete(A-G, enter one) >>  ");
                 while(!sc.hasNext("[ABCDEFG]")&&!sc.hasNext("[abcdefg]")){ //check format of user input
                     System.out.println("Invalid station name");
@@ -277,7 +297,7 @@ public class TestRace {
                     if(path.findStation(i).compareToIgnoreCase("") == 0){ //if station is null in path 
                         break;
                     }
-                    if(stationDelete.compareToIgnoreCase(path.findStation(i))==0){ // match the stationDelete in path
+                    if(stationDelete.compareToIgnoreCase(path.findStation(i))==0){ // match the stationDelete in path by path.findStation()
                         // find the station to be deleted from race path
                         for(int k=0;k<7;k++){
                             if(station[k].getStationName().compareTo(path.findStation(i))==0){ 
@@ -295,6 +315,8 @@ public class TestRace {
                     System.out.println("Station not exits..");
                     System.out.println("Station deleting failed..\n");
                 }
+                System.out.println("Total Stations in path :" + path.getNumOfStations());
+                System.out.println();
             }
             else if(choice ==3){ //back to main menu
                 break;
@@ -393,6 +415,7 @@ public class TestRace {
             System.out.println("Error in printing to text file..");
         }  
     }
+    
     public static void printQuestionTextFile(){
          try{
              FileWriter writer = new FileWriter(new File("Questions.txt"),false);

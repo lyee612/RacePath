@@ -28,12 +28,14 @@ public class RacePath <T> implements RacePathInterface<T> {
             lastNode = newNode;  // new station become last station
         }
         numberOfStations++; // increment total number of station in path
+        Station sta = (Station) newNode.data;
+        System.out.println("Station "+ sta.getStationName()+ "is successfully added!!");
         return true;   
         }
     
     
     @Override  //check whether the station to be added already exist in path or not
-    public boolean isExits(String stationName){
+    public boolean isExist(String stationName){
         Node temp = firstNode;
         while(temp != null){
             Station station = (Station)temp.data;
@@ -72,6 +74,7 @@ public class RacePath <T> implements RacePathInterface<T> {
             temp.next=null; // remove any reference to tempNode
             temp.prev=null; // remove any pointing reference for tempNode
             remove = true; // remove success
+            numberOfStations--;
             }
         }     
         else // station to be deleted not found
@@ -156,10 +159,6 @@ public class RacePath <T> implements RacePathInterface<T> {
             this.data = data;
             this.prev= null;
             this.next=null;
-        }
-                
-        public String toString(){
-            return data.toString();
         }
     }
 }

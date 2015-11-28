@@ -4,7 +4,7 @@ public interface RacePathInterface<T> {
  
     public boolean addStation(T newStation);
     public boolean removeStation(T station);
-    public boolean isExits(String stationName);
+    public boolean isExist(String stationName);
     public String findStation(int i);
     public void movePosition(int diceValue);
     public String getCurrentStationName();
